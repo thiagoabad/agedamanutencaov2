@@ -1,0 +1,15 @@
+extends layout
+
+block content
+  .container
+    h1 Bem vindo ao sistema de agenda de manutenções
+    form(action='/login', method='post')
+      .form-group
+        label.form-check-label(for='user') Usuário:
+        input#email.form-control(type='text', name='username', placeholder='exemplo@exemplo.com.br')
+      .form-group
+        label.form-check-label(for='datamanut') Senha:
+        input#password.form-control(type='password', name='password', placeholder='********')
+      input.btn.btn-primary(type='submit', value='Logar')
+      a(href='/')
+        button.btn.btn-default(type="button") Cancel

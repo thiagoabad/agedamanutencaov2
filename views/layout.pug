@@ -1,0 +1,40 @@
+doctype html
+html
+  head
+    meta(charset='utf-8')
+    meta(http-equiv='X-UA-Compatible', content='IE=edge,chrome=1')
+    meta(name='viewport', content='width=device-width, initial-scale=1, maximum-scale=1')
+    title Sistema de Agenda de Manutenções
+    // Latest compiled and minified CSS
+    link(rel='stylesheet', href='https://maxcdn.bootstrapcdn.com/bootstrap/3.4.0/css/bootstrap.min.css')
+    // jQuery library
+    script(src='https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js')
+    // Latest compiled JavaScript
+    script(src='https://maxcdn.bootstrapcdn.com/bootstrap/3.4.0/js/bootstrap.min.js')
+    link(rel='canonical', href='http://www.phyti.com.br/')
+    link(rel='stylesheet', href='/stylesheets/style.css')
+    // datepicker
+    link(rel='stylesheet', href='//code.jquery.com/ui/1.12.1/themes/base/jquery-ui.css')
+body
+  header#layout-header
+    nav.navbar.navbar-default
+      .container-fluid
+        ul.nav.navbar-nav
+          li
+            img.navbar-brand.logo(src='https://www.phyti.com.br/images/logo.png', alt='PHY Soluções em TI')
+          li#inicial(class""='')
+            a(href='/inicial') Inicial
+          li#lista(class""='')
+            a(href='/equipamentos') Lista Equipamentos
+          li#adiciona(class""='')
+            a(href='/equipamentos/form') Adiciona Equipamento
+          li
+            a(href='/emailprotecao') Envia Email
+          li
+            a(href="/logout") Logout
+  .container-fluid
+    if (error && error.length > 0)
+      br
+      h4.error-msg= error
+      br
+  block content

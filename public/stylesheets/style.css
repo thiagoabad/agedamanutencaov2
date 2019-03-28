@@ -1,0 +1,40 @@
+.lt-ie9 .form-newsletter{
+  display: none;
+}
+.lt-ie9 .ie8{
+  display: inline;
+}
+
+.ie8{
+  display: none;
+}
+
+.block {
+  display: block;
+}
+
+.p-error{
+  color: red;
+  font-weight: bold;
+}
+
+.h2index{
+  background-color: lightgrey;
+}
+
+.logo{
+  height: 50px;
+}
+
+h1 {
+  align-items: center;
+}
+
+body {
+  padding: 50px;
+  font: 14px "Lucida Grande", Helvetica, Arial, sans-serif;
+}
+
+a {
+  color: #00B7FF;
+}

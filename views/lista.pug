@@ -1,0 +1,39 @@
+extends layout
+
+block content
+
+  script(type='text/javascript').document.getElementById("lista").classList.value = "active"
+
+  .container
+    if (!user)
+      a(href="/login") Login
+      br
+      a(href="/register") Register
+    if (user)
+      h2 Lista todos os equipamentos
+      table.table.table-striped
+        thead
+          tr
+            th(hidden='') ID
+            th Nome Do Equipamento
+            th Data da próxima manutenção
+            th Data da última manutenção
+            th
+            th
+        tbody
+          tr
+          each val, index in equipamentos
+            - datamanut = equipamentos[index].datamanut.toISOString().replace(/(\d{4})-(\d{2})-(\d{2})[^\r\n]*/, '$3/$2/$1');
+            - datault = equipamentos[index].datault.toISOString().replace(/(\d{4})-(\d{2})-(\d{2})[^\r\n]*/, '$3/$2/$1');
+            tr
+              td= equipamentos[index].nome
+              td= datamanut
+              td= datault
+              td
+                form(action='/equipamentos/form', method='post')
+                  input(type='hidden', name='id', value=equipamentos[index]._id)
+                  button.btn.btn-warning Editar
+              td
+                form(action='/equipamentos/form/remove', method='post')
+                  input(type='hidden', name='id', value=equipamentos[index]._id)
+                  button.btn.btn-danger(onclick="return confirm('Tem certeza que deseja remover?')") Remover

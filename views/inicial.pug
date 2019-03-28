@@ -1,0 +1,37 @@
+extends layout
+
+block content
+  .container
+    if (!user)
+      a(href="/login") Login
+      br
+      a(href="/register") Register
+    if (user)
+      script(type='text/javascript').
+        document.getElementById("inicial").classList.value = "active"
+      // inicio da listagem em si
+      .container
+        .row
+          each val, index in equipamentos1
+            - data = equipamentos1[index].datamanut.toISOString().replace(/(\d{4})-(\d{2})-(\d{2})[^\r\n]*/, '$3/$2/$1')
+            .col-sm-4
+              h2.p-error= equipamentos1[index].nome
+              p.p-error= data
+              p.p-error Manutenção requerida!
+        .row
+          h2.h2index Próximas manutenções...
+          each val, index in equipamentos1
+            - data = equipamentos2[index].datamanut.toISOString().replace(/(\d{4})-(\d{2})-(\d{2})[^\r\n]*/, '$3/$2/$1')
+            .col-sm-2
+              h2= equipamentos2[index].nome
+              p= data
+              p Detalhes
+        .row
+          h2.h2index Extras
+          .col-sm-6
+            h3 Dados da Sotec
+            p COLOCAR DADOS DA SOTEC AQUI
+          .col-sm-6
+            h3 Outras dicas
+            p COLOCAR OUTRAS DICAS AQUI
+        br

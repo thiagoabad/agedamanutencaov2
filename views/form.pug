@@ -1,0 +1,49 @@
+extends layout
+
+block content
+
+  script.
+    document.getElementById("adiciona").classList.value = "active";
+  script(src='https://code.jquery.com/jquery-1.12.4.js')
+  script(src='https://code.jquery.com/ui/1.12.1/jquery-ui.js')
+  script.
+    $( function() {
+    $( "#datepicker" ).datepicker({
+    dateFormat: "dd/mm/yy"
+    });
+    });
+
+  .container
+    if (!user)
+      a(href="/login") Login
+      br
+      a(href="/register") Register
+    if (user)
+      form(action='/equipamentos', method='post')
+        - var idDoEquip = equipamentos._id;
+        - var nomeDoEquip = equipamentos.nome;
+        - if (equipamentos.datamanut && true){
+        -  datamanut = equipamentos.datamanut.toISOString().replace(/(\d{4})-(\d{2})-(\d{2})[^\r\n]*/, '$3/$2/$1');
+        -  edita = true;
+        - }
+        - var agora = new Date().toISOString().replace(/(\d{4})-(\d{2})-(\d{2})[^\r\n]*/, '$3/$2/$1');
+        .form-group(hidden='')
+          input#id(type='text', name='id', value=idDoEquip)
+        .form-group
+          label.form-check-label(for='nome') Nome:
+          input#nome.form-control(type='text', name='nome', value=nomeDoEquip, placeholder='Nobreak Cliente')
+        .form-group
+          label.form-check-label(for='datamanut') Data da Próxima Manutenção:
+          input#datepicker.form-control(type='text', name='datamanut', value=datamanut, placeholder='XX/XX/XXXX')
+        .form-group(hidden='')
+          label.form-check-label(for='datault')
+          input#datault.form-control(type='text', name='datault', value=agora, placeholder='XX/XX/XXXX')
+        - if (edita) {
+          .form-group(hidden='')
+            input#tipo.form-control(type='text', name='tipo', value='editar')
+          input.btn.btn-primary(type='submit', value='Editar')
+        - } else {
+          .form-group(hidden='')
+            input#tipo.form-control(type='text', name='tipo', value='salvar')
+          input.btn.btn-primary(type='submit', value='Salvar')
+        - }
