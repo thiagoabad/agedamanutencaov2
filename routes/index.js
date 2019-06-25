@@ -3,6 +3,7 @@ const passport = require('passport');
 const Account = require('../models/account');
 const router = express.Router();
 const db = require("../infra/db");
+const nodemailer = require('nodemailer');
 
 router.get('/', (req, res) => {
     res.render('index', { user : req.user });
@@ -59,8 +60,12 @@ router.get('/ping', (req, res) => {
 
 router.get('/inicial',
   function(req, res, next) {
+    //This if grants that some that enter here without login not get an error
+    if (req.user){
+      var user = req.user.username
+    }
     var Equips1 = db.Mongoose.model('equips', db.Equips);
-    Equips1.find({datamanut : {$lte: new Date()}}).lean().exec(function(err, results) {
+    Equips1.find({user: user, datamanut : {$lte: new Date()}}).lean().exec(function(err, results) {
       if (err) {
         res.redirect('/errors');
       } else {
@@ -70,8 +75,12 @@ router.get('/inicial',
     });
   },
   function(req, res, next) {
+    //This if grants that some that enter here without login not get an error
+    if (req.user){
+      var user = req.user.username
+    }
     var Equips2 = db.Mongoose.model('equips', db.Equips);
-    Equips2.find({datamanut : {$lt: new Date(new Date().setDate(new Date().getDate()+30)), $gt: new Date()}}).lean().exec(function(err, results) {
+    Equips2.find({user: user, datamanut : {$lt: new Date(new Date().setDate(new Date().getDate()+30)), $gt: new Date()}}).lean().exec(function(err, results) {
       if (err) {
         res.redirect('/errors');
       } else {
@@ -93,7 +102,12 @@ var listaEquipamentos = function(req, res, next) {
 
     var Equips = db.Mongoose.model('equips', db.Equips);
 
-    Equips.find({}).lean().exec(function(err, results) {
+    //This if grants that some that enter here without login not get an error
+    if (req.user){
+      var user = req.user.username
+    }
+
+    Equips.find({user : user}).lean().exec(function(err, results) {
         if(err) {
             return next(err);
         }
@@ -151,7 +165,7 @@ router.post('/equipamentos', function(req, res) {
     if(erros) {
         res.format({
             html: function() {
-                res.status(400).render('sform', {errosValidacao:erros, equipamentos:equipamento});
+                res.status(400).render('form', {errosValidacao:erros, equipamentos:equipamento});
             },
             json: function() {
                 res.status(400).json(erros);
@@ -198,8 +212,127 @@ router.post('/equipamentos', function(req, res) {
         }
       });
     }
-
-    //connection.end();
 });
+
+router.get('/email', function(req, res, next){
+      if (req.user){
+        var user = req.user.username
+      }
+      var Equips = db.Mongoose.model('equips', db.Equips);
+      Equips.find({user: user, datamanut : {$lt: new Date(new Date().setDate(new Date().getDate()+30))}}).lean().exec(function(err, results) {
+          if(err) {
+              return next(err);
+          }
+          if(results[0] == null){
+            req.sendEmail = false;
+          } else {
+            req.sendEmail = true;
+          }
+          req.listaEquipamentos = results;
+          next();
+      });
+  },function(req, res){
+    if (req.user){
+      var user = req.user.username
+    }
+    if (req.sendEmail) {
+      const transporter = nodemailer.createTransport({
+        host: "mail.phyti.com.br",
+        port: 587,
+        secure: false, // true for 465, false for other ports
+        auth: {
+    	     user: 'thiago@phyti.com.br',
+    	      pass: "Senh@123"
+          },
+        tls: { rejectUnauthorized: false }
+      });
+      const mailOptions = {
+        from: 'thiago@phyti.com.br',
+        to: user,
+        subject: 'Sistema de agenda de manutenção',
+        text: 'Lista de nobreaks necessitando de manutenção',
+        html: '<h1>Segue a lista de nobreaks necessitando de manutenção:</h1><table border="1px"><tr><th>Nome Do Equipamento</th><th>Data da próxima manutenção</th><th>Data da última manutenção</th></tr>'
+      };
+      equipamentos = req.listaEquipamentos
+      for(var i=0; i<equipamentos.length; i++) {
+        var datamanut = equipamentos[i].datamanut.toISOString().replace(/(\d{4})-(\d{2})-(\d{2})[^\r\n]*/, '$3/$2/$1');
+        var datault = equipamentos[i].datault.toISOString().replace(/(\d{4})-(\d{2})-(\d{2})[^\r\n]*/, '$3/$2/$1');
+        mailOptions.html = mailOptions.html + "<tr><td>" + equipamentos[i].nome + "</td>";
+        mailOptions.html = mailOptions.html + "<td>" + datamanut + "</td>";
+        mailOptions.html = mailOptions.html + "<td>" + datault + "</td></tr>";
+      }
+      mailOptions.html = mailOptions.html + "</table>";
+      transporter.sendMail(mailOptions, function(error, info){
+        if (error) {
+          console.log(error);
+          res.render('/inicial', {user : req.user,errosValidacao:{}, equipamentos:{}});
+        } else {
+          console.log('Email enviado pelo site: ' + info.response);
+          res.redirect('/inicial');
+        }
+      });
+    } else {
+      res.redirect('/inicial');
+    }
+});
+
+router.get('/emailviascript', function(req, res, next){
+      Account.find({}).lean().exec(function(err, results) {
+          if(err) {
+              return next(err);
+          }
+          req.listaUsuarios = results;
+          next();
+      });
+  },function(req, res){
+      for(var i1=0; i1<3; i1++){
+        var Equips = db.Mongoose.model('equips', db.Equips);
+        Equips.find({user : req.listaUsuarios[i1].username, datamanut : {$lt: new Date(new Date().setDate(new Date().getDate()+30))}}).lean().exec(function(err, results) {
+          if (results[0] == null){
+            to = 'a@a.com'
+          } else {
+            to = results[0].user
+          }
+          const transporter = nodemailer.createTransport({
+            host: "mail.phyti.com.br",
+            port: 587,
+            secure: false, // true for 465, false for other ports
+            auth: {
+        	     user: "thiago@phyti.com.br",
+        	      pass: "Senh@123"
+              },
+            tls: { rejectUnauthorized: false }
+          });
+          const mailOptions = {
+            from: 'thiago@phyti.com.br',
+            to: to,
+            subject: 'Sistema de agenda de manutenção',
+            text: 'Lista de nobreaks necessitando de manutenção',
+            html: '<h1>Segue a lista de nobreaks necessitando de manutenção:</h1><table border="1px"><tr><th>Nome Do Equipamento</th><th>Data da próxima manutenção</th><th>Data da última manutenção</th></tr>'
+          };
+          equipamentos = results
+          for(var i2=0; i2<equipamentos.length; i2++) {
+            var datamanut = equipamentos[i2].datamanut.toISOString().replace(/(\d{4})-(\d{2})-(\d{2})[^\r\n]*/, '$3/$2/$1');
+            var datault = equipamentos[i2].datault.toISOString().replace(/(\d{4})-(\d{2})-(\d{2})[^\r\n]*/, '$3/$2/$1');
+            mailOptions.html = mailOptions.html + "<tr><td>" + equipamentos[i2].nome + "</td>";
+            mailOptions.html = mailOptions.html + "<td>" + datamanut + "</td>";
+            mailOptions.html = mailOptions.html + "<td>" + datault + "</td></tr>";
+          }
+          mailOptions.html = mailOptions.html + "</table>";
+          //como o to = a@a.com significa que o email não irá sair, eu controlei via IF aqui
+          if (to != 'a@a.com'){
+            transporter.sendMail(mailOptions, function(error, info){
+            if (error) {
+              console.log(error);
+              res.render('/inicial', {user : req.user,errosValidacao:{}, equipamentos:{}});
+            } else {
+              console.log('Email enviado pelo site: ' + info.response);
+              res.redirect('/inicial');
+            }
+          });
+          }
+        })
+      }
+    });
 
 module.exports = router;

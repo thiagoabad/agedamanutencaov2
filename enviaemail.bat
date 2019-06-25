@@ -1,1 +1,2 @@
-node C:\Users\polte\Documents\agendmanut\emailscript.js
+node C:\Users\polte\Documents\passport\emailscript.js
+pause

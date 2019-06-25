@@ -5,7 +5,8 @@ var equips = new mongoose.Schema({
     tipo: String,
     nome: String,
     datamanut: Date,
-    datault: Date
+    datault: Date,
+    user: String
 }, { collection: 'agendamanut' }
 );
 

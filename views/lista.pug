@@ -2,13 +2,15 @@ extends layout
 
 block content
 
-  script(type='text/javascript').document.getElementById("lista").classList.value = "active"
-
+  script.
+    document.getElementById("lista").classList.value = "active";
   .container
     if (!user)
-      a(href="/login") Login
+      p
+        a.btn.btn-primary(href="/login") Login
       br
-      a(href="/register") Register
+      p
+        a.btn.btn-primary(href="/register") Register
     if (user)
       h2 Lista todos os equipamentos
       table.table.table-striped

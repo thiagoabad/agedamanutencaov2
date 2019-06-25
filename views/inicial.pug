@@ -3,9 +3,11 @@ extends layout
 block content
   .container
     if (!user)
-      a(href="/login") Login
+      p
+        a.btn.btn-primary(href="/login") Login
       br
-      a(href="/register") Register
+      p
+        a.btn.btn-primary(href="/register") Register
     if (user)
       script(type='text/javascript').
         document.getElementById("inicial").classList.value = "active"
@@ -20,7 +22,7 @@ block content
               p.p-error Manutenção requerida!
         .row
           h2.h2index Próximas manutenções...
-          each val, index in equipamentos1
+          each val, index in equipamentos2
             - data = equipamentos2[index].datamanut.toISOString().replace(/(\d{4})-(\d{2})-(\d{2})[^\r\n]*/, '$3/$2/$1')
             .col-sm-2
               h2= equipamentos2[index].nome

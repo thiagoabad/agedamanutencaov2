@@ -22,16 +22,18 @@ body
         ul.nav.navbar-nav
           li
             img.navbar-brand.logo(src='https://www.phyti.com.br/images/logo.png', alt='PHY Soluções em TI')
-          li#inicial(class""='')
-            a(href='/inicial') Inicial
-          li#lista(class""='')
-            a(href='/equipamentos') Lista Equipamentos
-          li#adiciona(class""='')
-            a(href='/equipamentos/form') Adiciona Equipamento
-          li
-            a(href='/emailprotecao') Envia Email
-          li
-            a(href="/logout") Logout
+          - if (user) {
+            li#inicial(class""='')
+              a(href='/inicial') Inicial
+            li#lista(class""='')
+              a(href='/equipamentos') Lista Equipamentos
+            li#adiciona(class""='')
+              a(href='/equipamentos/form') Adiciona Equipamento
+            li
+              a(href='/email') Envia Email
+            li
+              a(href="/logout") Logout
+          - }
   .container-fluid
     if (error && error.length > 0)
       br
