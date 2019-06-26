@@ -20,7 +20,7 @@ module.exports = function(app) {
       secure: false, // true for 465, false for other ports
       auth: {
   	     user: "thiago@phyti.com.br",
-  	      pass: "Senh@123"
+  	      pass: process.env.AG_MANUT_E_PASS
         },
       tls: { rejectUnauthorized: false }
     });
