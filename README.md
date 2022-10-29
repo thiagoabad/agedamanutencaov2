@@ -1,2 +1,4 @@
 # agedamanutencaov2
-Port do sistema para mongodb e implementeação do Passport
+Port from v1. Added mongoDb and Passport.
+
+End-of-life of this system. Archiving.
